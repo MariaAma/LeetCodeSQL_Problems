@@ -1,4 +1,4 @@
-# In process LeetCodeSQL_Problems
+# In process-LeetCodeSQL_Problems
 This repository hosts SQL solutions to 45 problems from a LeetCode series.
 
 ## Features:
