@@ -16,5 +16,4 @@ These solutions are intended only for educational purposes.
 Feedback and suggestions are welcome.
 
 ## My LeetCode Account and Hackerrank Account: 
-Leetcode.com/mariakyriaki22
-Hackerrank.com/profile/mariakyriaki22
+Leetcode.com/mariakyriaki22 and Hackerrank.com/profile/mariakyriaki22
