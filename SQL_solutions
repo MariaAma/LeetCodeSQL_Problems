@@ -36,4 +36,26 @@ ON end.process_id= st.process_id AND end.machine_id= st.machine_id
 WHERE st.activity_type ="start" AND end.activity_type ="end") AS T
 GROUP BY machine_id;
 
+# 577. Employee Bonus
+
+SELECT Employee.name, Bonus.bonus 
+FROM Employee 
+LEFT JOIN Bonus ON Employee.empId = Bonus.empId
+WHERE Bonus.bonus < 1000 OR Bonus.bonus IS NULL;
+
+# 1280. Students and Examinations
+
+SELECT A.student_id, student_name, A.subject_name, IFNULL(times, 0) AS attended_exams
+FROM (SELECT student_id, student_name, subject_name 
+      FROM Students
+      CROSS JOIN Subjects) A
+LEFT JOIN (SELECT student_id, subject_name, COUNT(*) AS times
+           FROM Examinations 
+           GROUP BY student_id, subject_name) B
+ON A.student_id = B.student_id AND A.subject_name = B.subject_name
+ORDER BY A.student_id, A.subject_name;
+
+# 570. Managers with at Least 5 Direct Reports
+
+
 
