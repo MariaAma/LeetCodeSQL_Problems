@@ -65,4 +65,69 @@ JOIN (SELECT managerId
            HAVING COUNT(managerId) >= 5) A
 ON E.id =A.managerId;
 
+# 1934. Confirmation Rate
+
+SELECT S.user_id, ROUND(AVG(IF(C.action="confirmed",1,0)),2) AS confirmation_rate
+FROM Signups S 
+LEFT JOIN Confirmations C 
+ON S.user_id = C.user_id 
+GROUP BY S.user_id;
+
+# 620. Not Boring Movies
+
+SELECT id, movie, description, rating
+FROM Cinema
+WHERE mod(id,2) != 0 AND description != "boring"
+ORDER BY rating DESC;
+
+# 1251. Average Selling Price
+
+SELECT P.product_id, IFNULL(ROUND(SUM(P.price*US.units)/SUM(US.units),2),0) AS average_price 
+FROM Prices P
+LEFT JOIN UnitsSold US
+ON P.product_id = US.product_id 
+AND US.purchase_date BETWEEN P.start_date AND P.end_date
+GROUP BY P.product_id;
+
+# 1075. Project Employees I
+
+SELECT P.project_id, ROUND(AVG(E.experience_years),2) AS average_years  
+FROM Project P
+LEFT JOIN Employee E
+ON P.employee_id  = E.employee_id  
+GROUP BY P.project_id;
+
+# 1633. Percentage of Users Attended a Contest
+
+SELECT contest_id, 
+ROUND((COUNT(R.user_id)*100 / (SELECT COUNT(user_id) FROM Users)) ,2) AS percentage
+FROM Register R
+LEFT JOIN Users U 
+ON U.user_id = R.user_id
+GROUP BY contest_id
+ORDER BY percentage DESC, contest_id ASC;
+
+# 1211. Queries Quality and Percentage
+
+SELECT query_name, ROUND(AVG(rating/position),2) AS quality, 
+ROUND(AVG(rating<3)*100,2) AS poor_query_percentage 
+FROM Queries
+WHERE query_name IS NOT NULL
+GROUP BY query_name; 
+
+# 1193. Monthly Transactions I
+
+SELECT DATE_FORMAT(trans_date, '%Y-%m') AS month, country, COUNT(trans_date) AS trans_count,
+SUM(CASE WHEN state = 'approved' THEN 1 ELSE 0 END) AS approved_count,
+SUM(amount) AS trans_total_amount ,
+SUM(CASE WHEN state = 'approved' THEN amount ELSE 0 END) AS approved_total_amount 
+FROM Transactions 
+GROUP BY DATE_FORMAT(trans_date, '%Y-%m'), country;
+
+# 1174. Immediate Food Delivery II
+
+
+
+
+
 
