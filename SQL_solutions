@@ -126,6 +126,77 @@ GROUP BY DATE_FORMAT(trans_date, '%Y-%m'), country;
 
 # 1174. Immediate Food Delivery II
 
+SELECT ROUND(SUM(customers)*100/COUNT(DISTINCT customer_id),2) AS immediate_percentage 
+FROM (SELECT customer_id, IF(MIN(order_date) = MIN(customer_pref_delivery_date), 1, 0) AS customers
+FROM Delivery
+GROUP BY customer_id) AS D;
+
+# 550. Game Play Analysis IV
+
+SELECT ROUND(COUNT(player_id)/(SELECT COUNT(DISTINCT player_id) FROM Activity),2) AS fraction 
+FROM Activity 
+WHERE (player_id, DATE_ADD(event_date, INTERVAL -1 DAY))
+    IN (
+        SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id
+    );
+
+# 2356. Number of Unique Subjects Taught by Each Teacher
+
+SELECT teacher_id, COUNT(DISTINCT subject_id) AS cnt 
+FROM Teacher
+GROUP BY teacher_id;
+
+# 1141. User Activity for the Past 30 Days I
+
+SELECT activity_date AS day, COUNT(DISTINCT user_id) AS active_users  
+FROM Activity
+WHERE (activity_date > "2019-06-27" AND activity_date <= "2019-07-27")
+GROUP BY activity_date;
+
+# 1070. Product Sales Analysis III
+
+SELECT product_id, year AS first_year, quantity, price
+FROM Sales 
+WHERE (product_id, year)
+    IN (SELECT product_id, MIN(year) FROM Sales group by product_id);
+
+# 596. Classes More Than 5 Students
+
+SELECT class
+FROM Courses
+GROUP BY class
+HAVING COUNT(DISTINCT student) >= 5;
+
+# 1729. Find Followers Count
+
+SELECT user_id, COUNT(follower_id) AS followers_count
+FROM Followers 
+GROUP BY user_id
+ORDER BY user_id ASC;
+
+# 619. Biggest Single Number
+
+SELECT MAX(num) AS num
+FROM MyNumbers 
+WHERE num IN (SELECT num FROM MyNumbers GROUP BY num HAVING COUNT(*)=1);
+
+# 1045. Customers Who Bought All Products
+
+SELECT customer_id 
+FROM Customer 
+GROUP BY customer_id
+HAVING COUNT(distinct product_key) = (SELECT COUNT(DISTINCT product_key) FROM Product);
+
+# 1731. The Number of Employees Which Report to Each Employee
+
+
+
+
+
+
+
+
+
 
 
 
