@@ -189,13 +189,45 @@ HAVING COUNT(distinct product_key) = (SELECT COUNT(DISTINCT product_key) FROM Pr
 
 # 1731. The Number of Employees Which Report to Each Employee
 
+SELECT E.employee_id, E.name, COUNT(M.reports_to) AS reports_count, ROUND(AVG(M.age),0) AS average_age 
+FROM Employees E
+JOIN Employees M
+ON E.employee_id = M.reports_to
+WHERE E.employee_id IN 
+    (
+    SELECT reports_to 
+    FROM Employees
+)
+GROUP BY E.employee_id
+ORDER BY E.employee_id;
 
+# 1789. Primary Department for Each Employee
 
+SELECT employee_id, department_id
+FROM Employee
+WHERE (employee_id, department_id) IN
+    (
+    SELECT employee_id, department_id
+    FROM Employee
+    GROUP BY employee_id 
+    HAVING COUNT(DISTINCT department_id)=1
+    UNION
+    SELECT employee_id, department_id
+    FROM Employee
+    WHERE primary_flag = 'Y'    
+    );
 
+# 610. Triangle Judgement
 
+SELECT x,y,z, 
+    CASE 
+        WHEN x+y>z AND x+z>y AND y+z>x
+        THEN 'Yes' 
+        ELSE 'No' 
+    END AS triangle 
+FROM Triangle;
 
-
-
+# 180. Consecutive Numbers
 
 
 
