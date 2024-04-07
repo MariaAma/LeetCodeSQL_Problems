@@ -404,7 +404,68 @@ WHERE cte.rn <= 3;
 
 # 1667. Fix Names in a Table
 
+SELECT user_id, CONCAT(UPPER(LEFT(name, 1)), LOWER(SUBSTRING(name, 2))) AS name
+FROM Users
+ORDER BY user_id;
 
+# 1527. Patients With a Condition
+
+SELECT patient_id, patient_name, conditions
+FROM Patients
+WHERE REGEXP_LIKE(conditions, ' DIAB1') OR REGEXP_LIKE(conditions, '^DIAB1');
+
+# 196. Delete Duplicate Emails
+
+WITH cte AS (
+    SELECT MIN(id) AS id
+    FROM Person
+    GROUP BY email
+)
+DELETE FROM Person
+WHERE id NOT IN (SELECT id FROM cte);
+
+# 176. Second Highest Salary
+
+with cte as (   
+    SELECT id, salary
+    FROM Employee
+    ORDER BY salary DESC
+    LIMIT 1)
+
+SELECT MAX(salary) AS SecondHighestSalary 
+FROM Employee
+WHERE salary NOT IN (SELECT salary FROM cte);
+
+# 1484. Group Sold Products By The Date
+
+SELECT sell_date, COUNT(DISTINCT product) AS num_sold, 
+       GROUP_CONCAT(DISTINCT product ORDER BY product ASC) AS products
+FROM Activities
+GROUP BY sell_date
+ORDER BY sell_date;
+
+# 1327. List the Products Ordered in a Period
+
+WITH cte AS (
+    SELECT product_id, order_date, 
+        CASE
+            WHEN SUM(unit) >= 100 THEN SUM(unit)
+            ELSE 0
+            END AS total_unit
+    FROM Orders
+    WHERE order_date LIKE '2020-02%' 
+    GROUP BY product_id
+    )
+SELECT P.product_name AS product_name, cte.total_unit AS unit
+FROM cte 
+LEFT JOIN Products P ON P.product_id = cte.product_id
+WHERE total_unit!=0;
+
+# 1517. Find Users With Valid E-Mails
+
+SELECT user_id, name, mail
+FROM Users
+WHERE mail REGEXP('^[A-Za-z][A-Za-z0-9_.-]*@leetcode\\.com$');
 
 
 
