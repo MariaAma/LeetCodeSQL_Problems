@@ -1,4 +1,4 @@
-# In process-LeetCodeSQL_Problems
+# LeetCodeSQL_Problems
 This repository contains MySQL solutions to 45 problems from the LeetCode series "50 problems with SQL". Please note that the first 5 basic easy problems are not included in this script.
 Feel free to explore the solutions and contribute your own if you have different approaches!
 
