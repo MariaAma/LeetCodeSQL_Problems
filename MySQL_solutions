@@ -229,6 +229,181 @@ FROM Triangle;
 
 # 180. Consecutive Numbers
 
+SELECT DISTINCT num AS ConsecutiveNums 
+FROM (
+    SELECT num, 
+    LEAD(num, 1, 0) OVER (ORDER BY id) AS next_1,
+    LEAD(num, 2, null) OVER (ORDER BY id) AS next_2
+    FROM Logs
+) AS T
+WHERE num = next_1 AND num = next_2;
+
+# 1164. Product Price at a Given Date
+
+SELECT product_id, new_price AS price   
+FROM Products
+WHERE (product_id, change_date) IN
+(
+    SELECT product_id, MAX(change_date)
+    FROM Products 
+    WHERE change_date <='2019-08-16'
+    GROUP BY product_id
+)
+UNION 
+SELECT product_id, 10 AS price  
+FROM Products
+WHERE (product_id) NOT IN
+(
+    SELECT product_id
+    FROM Products 
+    WHERE change_date <='2019-08-16'
+    GROUP BY product_id
+)
+ORDER BY product_id;
+
+# 1204. Last Person to Fit in the Bus
+
+SELECT person_name 
+FROM (
+SELECT person_name, SUM(weight) OVER(ORDER BY turn) AS weight
+FROM Queue
+) Q
+WHERE weight<=1000
+ORDER BY weight DESC
+LIMIT 1;
+
+# 1907. Count Salary Categories
+
+(Select 'Low Salary' AS category, count(account_id) AS accounts_count
+FROM Accounts
+WHERE income < '20000'
+LIMIT 1) 
+UNION
+(Select 'Average Salary' AS category, count(account_id) AS accounts_count
+FROM Accounts
+WHERE income >= '20000' AND income <='50000'
+LIMIT 1) 
+UNION
+(Select 'High Salary' AS category, count(account_id) AS accounts_count
+FROM Accounts
+WHERE income >'50000'
+LIMIT 1);
+
+# 1978. Employees Whose Manager Left the Company
+
+SELECT employee_id 
+FROM Employees 
+WHERE salary < '30000' AND manager_id  NOT IN (SELECT employee_id FROM Employees)
+ORDER BY employee_id;
+
+# 626. Exchange Seats
+
+SELECT id, 
+CASE 
+    WHEN id %2=0 THEN LAG(student, 1, student) OVER (ORDER BY id)
+    ELSE LEAD(student, 1, student) OVER (ORDER BY id)
+    END AS student 
+FROM Seat;
+
+# 1341. Movie Rating
+
+WITH UserRatingCounts AS (
+    SELECT COUNT(user_id) AS times, user_id
+    FROM MovieRating 
+    GROUP BY user_id
+)
+(SELECT U.name AS results
+FROM UserRatingCounts C
+LEFT JOIN Users U 
+ON C.user_id = U.user_id 
+WHERE C.times IN (
+    SELECT MAX(times) 
+    FROM UserRatingCounts
+)
+ORDER BY U.name ASC
+LIMIT 1
+) 
+UNION ALL
+(
+SELECT title       
+FROM Movies
+JOIN (
+    SELECT MovieRating.movie_id
+    FROM MovieRating 
+    LEFT JOIN Movies 
+    ON MovieRating.movie_id = Movies.movie_id
+    WHERE YEAR(MovieRating.created_at) = 2020 AND MONTH(MovieRating.created_at) = 2 
+    GROUP BY Movies.title
+    ORDER BY AVG(MovieRating.rating) DESC, Movies.title ASC
+    LIMIT 1) M
+ON M.movie_id = Movies.movie_id
+);
+
+# 1321. Restaurant Growth
+
+SELECT finish_d.visited_on AS visited_on,
+       SUM(C.amount) AS amount,
+       ROUND(SUM(C.amount)/7,2) AS average_amount
+FROM(
+    SELECT DISTINCT visited_on
+    FROM Customer  
+    WHERE DATEDIFF(
+        visited_on, 
+        (SELECT MIN(visited_on) FROM Customer)
+    ) >= 6
+) finish_d
+LEFT JOIN Customer C
+ON DATEDIFF(finish_d.visited_on, C.visited_on) BETWEEN 0 and 6
+GROUP BY finish_d.visited_on
+ORDER BY finish_d.visited_on;
+
+# 602. Friend Requests II: Who Has the Most Friends
+
+SELECT id, num
+FROM (
+    SELECT id, SUM(num) AS num
+    FROM (
+        SELECT DISTINCT requester_id AS id, count(requester_id) AS num
+        FROM RequestAccepted
+        GROUP BY requester_id 
+        UNION ALL
+        SELECT DISTINCT accepter_id AS id,  count(accepter_id) AS N
+        FROM RequestAccepted
+        GROUP BY accepter_id) AS all_id
+    GROUP BY id) AS result
+ORDER BY num DESC
+LIMIT 1;
+
+# 585. Investments in 2016
+
+SELECT ROUND(SUM(tiv_2016),2) AS tiv_2016 
+FROM Insurance
+WHERE tiv_2015 IN
+(SELECT CASE WHEN COUNT(tiv_2015)>1 THEN tiv_2015 END AS tiv_2015
+FROM Insurance
+GROUP BY tiv_2015)
+AND (lat,lon) NOT IN(
+    SELECT lat, lon
+    FROM Insurance
+    GROUP BY lat, lon
+    HAVING(COUNT(*))>1);
+
+# 185. Department Top Three Salaries
+
+WITH cte AS( 
+    SELECT name, salary, departmentId,
+           DENSE_RANK() OVER (PARTITION BY departmentId ORDER BY salary DESC) AS rn
+    FROM Employee 
+    )
+
+SELECT D.name AS Department, cte.name AS Employee, cte.salary AS Salary
+FROM cte 
+JOIN Department D
+ON D.id = cte.departmentId
+WHERE cte.rn <= 3;
+
+# 1667. Fix Names in a Table
+
 
 
 
